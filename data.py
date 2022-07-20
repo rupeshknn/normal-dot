@@ -27,6 +27,27 @@ n1_data = dmrg_text("n1.dat")
 n2_data = dmrg_text("n1e.dat")
 
 
+EXPERIMENTAL_PATH = (
+    "Experimental data/opening_parity/opening_parity_1/" + "dataset_opening_parity_1_"
+)
+Rows_to_load = [0, 1, 2]
+Gate_Voltages = np.round([-159.8 + 0.1 * idx for idx in range(5, 184, 17)], 1)
+EXPERIMENTAL_DATA = np.array(
+    [
+        np.loadtxt(EXPERIMENTAL_PATH + f"{v_g}.csv", skiprows=1, delimiter=",")[
+            :, Rows_to_load
+        ]
+        for v_g in Gate_Voltages
+    ]
+)
+
+
+@njit
+def exp_data_func(data_idx):
+    idx = np.where(Gate_Voltages == data_idx)[0][0]
+    return EXPERIMENTAL_DATA[idx, :, 0:2], EXPERIMENTAL_DATA[idx, :, 0:3:2]
+
+
 @njit
 def nrg_data_func(u, gamma):
     idx = np.where(GAMMA_DICT == gamma)[0][0]
@@ -87,3 +108,24 @@ def analytical_data(gamma, log_g0, global_parameters, v0, fit_step):
     couduc = (couduc + couduc[::-1]) / 2
 
     return q_caps, c_total, couduc
+
+
+@njit
+def experimental_data(data_idx, symmetrize):  # filter
+    c_data, r_data = exp_data_func(data_idx)
+
+    exp_c = c_data[:, 1]
+    exp_g = r_data[:, 1]
+    exp_v = (c_data[:, 0] - np.mean(c_data[:, 0])) * 1e3
+
+    filter_bool = (exp_v < V_RANGE) * (-V_RANGE < exp_v)
+
+    exp_c = exp_c[filter_bool] * 1e15
+    exp_g = exp_g[filter_bool] * 1e8
+    exp_v = exp_v[filter_bool]
+
+    if symmetrize:
+        exp_c = (exp_c + exp_c[::-1]) / 2
+        exp_g = (exp_g + exp_g[::-1]) / 2
+
+    return exp_v, exp_c, exp_g
