@@ -4,8 +4,12 @@ import numpy as np
 from scipy.constants import e
 from numba import njit
 
-from model import ROK_ENERGY_UNIT, FREQUENCY, DELTA
 from model import q_capacitance, tunnel_capacitance, conductance
+
+DELTA = 0.250 * 1e-3 * e
+ROK_ENERGY_UNIT = DELTA / 0.166
+V_RANGE = 0.605
+FREQUENCY = 2 * np.pi * 368 * 1e6
 
 NRG_PATH = f"f1web.ijs.si/~zitko/data/chi/" + "U=0.333_Ec=0.065/"
 GAMMA_DICT = np.array(

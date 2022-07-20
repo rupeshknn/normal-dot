@@ -2,11 +2,6 @@ import numpy as np
 from scipy.constants import e, k
 from numba import njit
 
-DELTA = 0.250 * 1e-3 * e
-ROK_ENERGY_UNIT = DELTA / 0.166
-V_RANGE = 0.605
-FREQUENCY = 2 * np.pi * 368 * 1e6
-
 
 @njit
 def gamma(g0, v0, T, N):
