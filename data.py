@@ -10,8 +10,9 @@ DELTA = 0.250 * 1e-3 * e
 ROK_ENERGY_UNIT = DELTA / 0.166
 V_RANGE = 0.605
 FREQUENCY = 2 * np.pi * 368 * 1e6
+U = 0.333  # in rok units
 
-NRG_PATH = f"f1web.ijs.si/~zitko/data/chi/" + "U=0.333_Ec=0.065/"
+NRG_PATH = f"f1web.ijs.si/~zitko/data/chi/" + f"U={U}_Ec=0.065/"
 GAMMA_DICT = np.array(
     re.findall("0.\d{4}", " ".join(os.listdir(NRG_PATH))), dtype=float
 )
@@ -49,7 +50,7 @@ def exp_data_func(data_idx):
 
 
 @njit
-def nrg_data_func(u, gamma):
+def nrg_data_func(gamma):
     idx = np.where(GAMMA_DICT == gamma)[0][0]
     nrg_data = [optical1_data[idx, :, :], n1_data[idx, :, :], n2_data[idx, :, :]]
     return nrg_data
@@ -57,19 +58,19 @@ def nrg_data_func(u, gamma):
 
 @njit
 def analytical_data(gamma, log_g0, global_parameters, v0, fit_step):
-    u, alpha, temp, log_n = global_parameters
+    alpha, temp, log_n = global_parameters
 
     v0 = v0 * alpha
     normunit = ROK_ENERGY_UNIT * 1e3 / e
 
-    nu = 1 - v0 / (u * normunit)
+    nu = 1 - v0 / (U * normunit)
     n = 10**log_n
     g0 = 10**log_g0
     if log_g0 == 0.0:
         g0 = 0.0
     w = FREQUENCY
 
-    o1, n1, n2 = nrg_data_func(u, gamma)
+    o1, n1, n2 = nrg_data_func(gamma)
 
     s_mg = np.interp(nu, o1[:, 0], o1[:, 1]) * DELTA
     s_mg = (s_mg + s_mg[::-1]) / 2
@@ -77,13 +78,13 @@ def analytical_data(gamma, log_g0, global_parameters, v0, fit_step):
     n_e = np.interp(nu, n2[:, 0], n2[:, 1])
 
     dn_g = (
-        np.interp(nu, n1[1:, 0], (n1[1:, 1] - n1[:-1, 1]) / (-0.02 * u))
+        np.interp(nu, n1[1:, 0], (n1[1:, 1] - n1[:-1, 1]) / (-0.02 * U))
         / ROK_ENERGY_UNIT
     )
     dn_g = (dn_g + dn_g[::-1]) / 2
 
     dn_e = (
-        np.interp(nu, n2[1:, 0], (n2[1:, 1] - n2[:-1, 1]) / (-0.02 * u))
+        np.interp(nu, n2[1:, 0], (n2[1:, 1] - n2[:-1, 1]) / (-0.02 * U))
         / ROK_ENERGY_UNIT
     )
     dn_e = (dn_e + dn_e[::-1]) / 2
@@ -92,7 +93,7 @@ def analytical_data(gamma, log_g0, global_parameters, v0, fit_step):
         q_caps = alpha * alpha * q_capacitance(s_mg, temp, n, dn_e, dn_g) * 1e15
         return q_caps, q_caps, q_caps
     ds_mg = (
-        np.interp(nu, o1[1:, 0], (o1[1:, 1] - o1[:-1, 1]) / (-0.02 * u))
+        np.interp(nu, o1[1:, 0], (o1[1:, 1] - o1[:-1, 1]) / (-0.02 * U))
         * DELTA
         / ROK_ENERGY_UNIT
     )

@@ -37,18 +37,8 @@ def min_gamma_weight(dset, global_parameters, sym):
 
 @njit
 def total_weight(global_parameters, sym):
-    u, alpha, temp, log_n = global_parameters
     weight_set = np.array(
-        [
-            min_gamma_weight(v_g, (u, alpha, temp, log_n), sym)[1]
-            for v_g in Gate_Voltages
-        ]
+        [min_gamma_weight(v_g, global_parameters, sym)[1] for v_g in Gate_Voltages]
     )
     total_weight = np.sum(weight_set)
     return total_weight
-
-
-# remove this function once U parameter is removed
-@njit
-def total_weight_cont(continous_parameters, u, sym):
-    return total_weight((u, *continous_parameters), sym)
