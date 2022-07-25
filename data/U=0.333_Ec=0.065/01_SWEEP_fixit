@@ -1,0 +1,13 @@
+#!/usr/bin/env perl
+
+foreach (<*>) {
+  -d or next;
+  $dir = $_;
+  -e "$dir/inputFile.txt" or next;
+  if (-e "$dir/solution.h5" && -s "$dir/solution.h5" > 80000) { next; }
+  $s = (-s "$dir/solution.h5");
+  system "pwd";
+  print "$dir $s\n";
+#  system "rm -rfv $dir";
+}
+

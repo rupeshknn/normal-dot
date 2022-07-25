@@ -1,0 +1,23 @@
+#!/usr/bin/env perl
+# Process all results in subdirectories
+
+foreach (<Gamma=*>) {
+  -d or next;
+  $dir = $_;
+  chdir $dir;
+  system "./02_PROC";
+
+  unlink "002_COLLECT";
+  system "../002_COLLECT";
+
+  unlink "03_CALC_CHI-FACTOR";
+  system "../03_CALC_CHI-FACTOR";
+
+  unlink "optical_scale";
+  system "../optical_scale";
+
+  unlink "fitn1e";
+  system "../fitn1e";
+
+  chdir "..";
+}

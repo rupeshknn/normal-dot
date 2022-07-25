@@ -1,0 +1,22 @@
+#!/usr/bin/env perl
+# Collect the results for all gate voltages
+
+open (O1, "|sortnum>optical1.dat.raw");
+open (N1, "|sortnum>n1.dat");
+open (N1E, "|sortnum>n1e.dat");
+
+foreach (<nu=*>) {
+    -d or next;
+    $dir = $_;
+    system "rm -v $dir/slurm*";
+    -e "$dir/optical.dat" or next;
+    /nu=(\S*)/ or die;
+    $nu = $1;
+    print "nu=$nu\n";
+    ($o1) = split(' ', `cat $dir/optical.dat`);
+    ($n1, $n1e) = split(' ', `cat $dir/n.dat`);
+    print O1 "$nu $o1\n";
+    print N1 "$nu $n1\n";
+    print N2 "$nu $n2\n";
+    print N1E "$nu $n1e\n";
+}

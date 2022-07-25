@@ -1,0 +1,17 @@
+#!/bin/bash
+math <<EOF
+U = 0.333;
+factor = 1/U;
+l = Import["n1.dat"];
+f = Interpolation[l];
+chi[x_] = factor D[f[x], x];
+tab = Table[{x, chi[x]}, {x, -1, 3, 0.01}];
+Export["chi1.dat",tab];
+
+l = Import["n1e.dat"];
+f = Interpolation[l];
+chi[x_] = factor D[f[x], x];
+tab = Table[{x, chi[x]}, {x, -1, 3, 0.01}];
+Export["chi1e.dat",tab];
+
+EOF

@@ -1,0 +1,10 @@
+#!/usr/bin/env perl
+# Process all results in subdirectories
+
+foreach (<Gamma=*>) {
+  -d or next;
+  $dir = $_;
+  chdir $dir;
+  system "perl ../01_SWEEP_fixit";
+  chdir "..";
+}

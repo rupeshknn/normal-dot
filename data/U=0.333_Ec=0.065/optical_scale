@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+# Rescale the optical excitation energy as a mitigation of finite-size effects in DMRG
+# This procedure is reliable, as demonstrated through comparisons with reference NRG results
+# RZ May 2022
+
+$op =  1.9362415834534765; # actual raw value
+$exp = 2.0; # fixed value
+
+$factor = $exp/$op;
+
+system "scaley $factor optical1.dat.raw >optical1.dat";
