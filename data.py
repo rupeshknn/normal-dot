@@ -1,3 +1,6 @@
+# pylint: disable=invalid-name
+"""Module that loads the simulation and experimental data"""
+
 import os
 import re
 import numpy as np

@@ -1,3 +1,7 @@
+# pylint: disable=invalid-name, disable=R0913
+
+"""Functions that define the analytical model derived from master equation"""
+
 import numpy as np
 from scipy.constants import e, k
 from numba import njit

@@ -1,3 +1,5 @@
+# pylint: disable=invalid-name
+"""Module that defines the weight functions for fitting"""
 import numpy as np
 from numba import njit
 from data import analytical_data, experimental_data, Gate_Voltages, V_RANGE, GAMMA_DICT
