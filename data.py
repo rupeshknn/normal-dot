@@ -13,6 +13,7 @@ FREQUENCY = 2 * np.pi * 368 * 1e6
 U = 0.333  # in rok units
 
 NRG_PATH = f"f1web.ijs.si/~zitko/data/chi/" + f"U={U}_Ec=0.065/"
+# U = re.findall("U=[0-9 .]+", NRG_PATH)
 GAMMA_DICT = np.array(
     re.findall("0.\d{4}", " ".join(os.listdir(NRG_PATH))), dtype=float
 )
