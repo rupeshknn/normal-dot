@@ -42,3 +42,42 @@ def total_weight(global_parameters, sym):
     )
     total_weight = np.sum(weight_set)
     return total_weight
+
+
+@njit
+def full_weight_def(dset, global_parameters, log_g0, sym):
+    gamma = min_gamma_weight(dset, global_parameters, sym)[0]
+    caps_thresh = 0.027  # fF
+    cond_thresh = 1.0  # 10 mu G
+    exp_v, exp_c, exp_g = experimental_data(dset, sym)
+    _, caps, cond = analytical_data(gamma, log_g0, global_parameters, exp_v, fit_step=2)
+    weight_c = (
+        ((caps - exp_c) ** 2)
+        / (np.maximum(caps_thresh, (caps + exp_c) / 2) ** 2)
+        * (1 - np.abs(exp_v) / V_RANGE)
+    )
+    weight_g = (
+        ((cond - exp_g) ** 2)
+        / (np.maximum(cond_thresh, (cond + exp_g) / 2) ** 2)
+        * (1 - np.abs(exp_v) / V_RANGE)
+    )
+    return gamma, np.sum(weight_c) + np.sum(weight_g)
+
+
+@njit
+def full_total_weight(dissipative_parameters, global_parameters, sym):
+    u, alpha, temp, log_n = global_parameters
+    data_sets = Gate_Voltages
+    weight_set = np.array(
+        [
+            full_weight_def(
+                data_sets[idx],
+                (u, alpha, temp, log_n),
+                dissipative_parameters[idx],
+                sym,
+            )[1]
+            for idx in range(len(data_sets))
+        ]
+    )
+    total_weight = np.sum(weight_set)
+    return total_weight
