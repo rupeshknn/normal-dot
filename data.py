@@ -15,7 +15,7 @@ V_RANGE = 0.605
 FREQUENCY = 2 * np.pi * 368 * 1e6
 U = 0.333  # in rok units
 
-NRG_PATH = f"f1web.ijs.si/~zitko/data/chi/" + f"U={U}_Ec=0.065/"
+NRG_PATH = f"data/U={U}_Ec=0.065/"
 # U = re.findall("U=[0-9 .]+", NRG_PATH)
 GAMMA_DICT = np.array(
     re.findall("0.\d{4}", " ".join(os.listdir(NRG_PATH))), dtype=float
@@ -33,7 +33,7 @@ n2_data = dmrg_text("n1e.dat")
 
 
 EXPERIMENTAL_PATH = (
-    "Experimental data/opening_parity/opening_parity_1/" + "dataset_opening_parity_1_"
+    "data/opening_parity_1/" + "dataset_opening_parity_1_"
 )
 Rows_to_load = [0, 1, 2]
 Gate_Voltages = np.round([-159.8 + 0.1 * idx for idx in range(5, 184, 17)], 1)
